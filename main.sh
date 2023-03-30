@@ -54,13 +54,14 @@ alpineproot() {
 
 		[ ! -d $CONTAINER_PATH ] && mkdir -p $CONTAINER_PATH
 
+		mkdir $CONTAINER_PATH/etc
+		echo -e "nameserver 1.1.1.1\nnameserver 1.0.0.1" >$CONTAINER_PATH/etc/resolv.conf
+
 		# Use proot to prevent hard link extraction error
 		$PROOT --link2symlink tar -xzf $HOME/.cached_rootfs.tar.gz -C $CONTAINER_PATH
 
 		# If extraction fail, Delete cached rootfs and try again
 		[ $? != 0 ] && rm -f $HOME/.cached_rootfs.tar.gz && alpineproot $@ && exit 0
-
-		echo -e "nameserver 1.1.1.1\nnameserver 1.0.0.1" >$CONTAINER_PATH/etc/resolv.conf
 	fi
 
 	proot -0 rm -rf $CONTAINER_PATH/proc
