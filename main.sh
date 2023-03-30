@@ -54,9 +54,6 @@ alpineproot() {
 
 		[ ! -d $CONTAINER_PATH ] && mkdir -p $CONTAINER_PATH
 
-		mkdir $CONTAINER_PATH/etc
-		echo -e "nameserver 1.1.1.1\nnameserver 1.0.0.1" >$CONTAINER_PATH/etc/resolv.conf
-
 		# Use proot to prevent hard link extraction error
 		$PROOT --link2symlink tar -xzf $HOME/.cached_rootfs.tar.gz -C $CONTAINER_PATH
 
@@ -235,7 +232,7 @@ alpineproot() {
 	COMMANDS+=" --link2symlink"
 	COMMANDS+=" --kill-on-exit"
 	COMMANDS+=" --kernel-release=\"${ALPINEPROOT_KERNEL_RELEASE:-5.18}\""
-	COMMANDS+=" -b /dev -b /proc -b /sys"
+	COMMANDS+=" -b /dev -b /proc -b /sys -b /etc/resolv.conf"
 	COMMANDS+=" -b /proc/self/fd:/dev/fd"
 	COMMANDS+=" -b /proc/self/fd/0:/dev/stdin"
 	COMMANDS+=" -b /proc/self/fd/1:/dev/stdout"
