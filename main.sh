@@ -226,6 +226,9 @@ alpineproot() {
 		swap_ra_hit 0
 	EOM
 
+	# Proceed make fake /etc/resolv.conf
+	[ ! -r /etc/resolv.conf ] && echo -e "nameserver 1.1.1.1\nnameserver 1.0.0.1" >$CONTAINER_PATH/etc/.resolv.conf
+
 	if [ "$(uname -o)" = "Android" ]; then unset LD_PRELOAD; fi
 
 	COMMANDS=$PROOT
@@ -239,6 +242,9 @@ alpineproot() {
 	COMMANDS+=" -b /proc/self/fd/2:/dev/stderr"
 	for f in stat version loadavg vmstat uptime; do
 		[ -f "$CONTAINER_PATH/proc/.$f" ] && COMMANDS+=" -b $CONTAINER_PATH/proc/.$f:/proc/$f"
+	done
+	for f in resolv.conf; do
+		[ -f "$CONTAINER_PATH/etc/.$f" ] && COMMANDS+=" -b $CONTAINER_PATH/etc/.$f:/etc/$f"
 	done
 	COMMANDS+=" -r $CONTAINER_PATH -0 -w /root"
 	COMMANDS+=" -b $CONTAINER_PATH/root:/dev/shm"
